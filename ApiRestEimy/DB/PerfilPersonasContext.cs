@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ApiRestEimy.Modelos;
+using ApiRestEimy.DTO;
 
 namespace ApiRestEimy.DB
 {
@@ -15,5 +16,6 @@ namespace ApiRestEimy.DB
         }
 
         public DbSet<PerfilesPersonas> PerfilPersonas { get; set; }
+
     }
 }

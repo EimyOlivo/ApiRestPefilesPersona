@@ -1,7 +1,7 @@
 ﻿using ApiRestEimy.Modelos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+using ApiRestEimy.DTO;
 
 namespace ApiRestEimy
 {

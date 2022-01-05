@@ -6,19 +6,23 @@ using System.Threading.Tasks;
 using ApiRestEimy.Modelos;
 using ApiRestEimy.DB;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace ApiRestEimy.Repositorio
 {
     public class PerfilesPersonasRepo : IPerfilesPersonasRepo
     {
         private readonly PerfilPersonasContext _context;
+        private readonly IMapper _mapper;
         public PerfilesPersonasRepo(PerfilPersonasContext context)
         {
             _context = context;
+
         }
 
         public async Task<PerfilesPersonas> Agregar(PerfilesPersonas nuevoperfil)
         {
+
             _context.PerfilPersonas.Add(nuevoperfil);
             await _context.SaveChangesAsync();
 
