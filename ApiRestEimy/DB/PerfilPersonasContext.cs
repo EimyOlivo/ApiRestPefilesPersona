@@ -14,8 +14,8 @@ namespace ApiRestEimy.DB
         {
             Database.EnsureCreated();
         }
-
+        public DbSet<Usuarios> Usuarios { get; set; }
         public DbSet<PerfilesPersonas> PerfilPersonas { get; set; }
-
+        
     }
 }

@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
+using System.Data.Entity.Infrastructure;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -19,32 +21,47 @@ namespace ApiRestEimy.Controllers
     {
         private readonly IPerfilesPersonasRepo _perfilesPersonasRepo;
         private readonly IMapper _mapper;
+        private readonly ILogger<ApiController> _logger;
 
-        public ApiController(IPerfilesPersonasRepo perfilesPersonasRepo, IMapper mapper)
+        public ApiController(IPerfilesPersonasRepo perfilesPersonasRepo, IMapper mapper, ILogger<ApiController> logger)
         {
             _perfilesPersonasRepo = perfilesPersonasRepo;
             _mapper = mapper;
-
+            _logger = logger;
         }
+
         // GET: api/<ApiController>
         [HttpGet]
-        public async Task<IEnumerable<PerfilesPersonas>> Get()
+        public async Task<ActionResult<IEnumerable<PerfilesPersonas>>> Get()
         {
-            return await _perfilesPersonasRepo.ObtenerPerfiles();
+            try
+            {
+                return Ok(await _perfilesPersonasRepo.ObtenerPerfiles());
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "error");
+                return Ok("");
 
-            
+
+
+            }
         }
 
         // GET api/<ApiController>/5
         [HttpGet("{id}")]
         public async Task<ActionResult<PerfilesPersonas>> Get(int id)
         {
-            var perfil = await _perfilesPersonasRepo.ObtenerPerfil(id);
-            if (perfil == null)
+            try
             {
-                return NotFound("no existe el perfil numero " + id);
+                var perfil = await _perfilesPersonasRepo.ObtenerPerfil(id);
+                return Ok("no existe el perfil numero " + id);
             }
-            return Ok(perfil);
+            catch (Exception e)
+            {
+                _logger.LogError(e, "error");
+                return BadRequest("Debe revisar los datos agregados");
+            }            
 
         }
 
@@ -52,30 +69,56 @@ namespace ApiRestEimy.Controllers
         [HttpPost]
         public async Task<ActionResult<PerfilesPersonasCrearDTO>> Post([FromBody] PerfilesPersonasCrearDTO nuevoperfil)
         {
-            PerfilesPersonas perfiles = _mapper.Map<PerfilesPersonas>(nuevoperfil);
-
-            //var perfil = await _perfilesPersonasRepo.Agregar(nuevoperfil);
-            if(nuevoperfil.Nombre == "" || nuevoperfil.Apellido == "")
+            try
             {
-                return NotFound("La casilla de nombre y Apellido son obligatorias. Asegurece de llenarlas correctamenre");
-            }
-            await _perfilesPersonasRepo.Agregar(perfiles);
-            return Ok();
+                PerfilesPersonas perfiles = _mapper.Map<PerfilesPersonas>(nuevoperfil);
 
+                if (nuevoperfil.Nombre == "" || nuevoperfil.Apellido == "")
+                {
+                    _logger.LogError("Rellena bien el nombre y apellido al crear un perfil");
+                    return BadRequest("La casilla de nombre y Apellido son obligatorias. Asegurece de llenarlas correctamenre");
+                }
+                await _perfilesPersonasRepo.Agregar(perfiles);
+                return Ok(perfiles);
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "error");
+                return StatusCode(500);
+            }
+           
 
         }
+
         // PUT api/<ApiController>/5
         [HttpPut]
-        public async Task<ActionResult> Put(int id, [FromBody] PerfilesPersonas persona)
+        public async Task<ActionResult> Put(int id, [FromBody] PerfilesPersonasCrearDTO persona)
         {
-            if (id != persona.Id)
+            try
             {
-                return NotFound("No existe el perfil numero " + id);
+                if(id == null || persona == null || persona.Nombre == null || persona.Apellido == null)
+                {
+                    return BadRequest("Ingrese los datos de manera correcta");
+                }
+
+                PerfilesPersonas perfiles = _mapper.Map<PerfilesPersonas>(persona);
+                perfiles.Id = id;
+                //var perfilObtenido = _perfilesPersonasRepo.ObtenerPerfil(id);
+                await _perfilesPersonasRepo.editar(perfiles);
+                return Ok(perfiles);
+                
             }
-            PerfilesPersonas perfiles = _mapper.Map<PerfilesPersonas>(persona);
-            await _perfilesPersonasRepo.editar(perfiles);
-            return NoContent();
-           
+            catch (DbUpdateConcurrencyException e)
+            {
+                _logger.LogError(e, "error");
+                return NotFound("el id seleccionado no existe ");
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "error");
+                return StatusCode(500);
+            }
         }
     }
 }

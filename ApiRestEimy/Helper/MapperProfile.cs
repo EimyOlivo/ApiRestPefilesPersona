@@ -13,6 +13,9 @@ namespace ApiRestEimy.Helper
 
             CreateMap<PerfilesPersonas, PerfilesPersonasDTO>();
             CreateMap<PerfilesPersonasDTO, PerfilesPersonas>();
+
+            CreateMap<Usuarios, CrearUsuarioDTO>();
+            CreateMap<CrearUsuarioDTO, Usuarios>();
         }
     }
 }

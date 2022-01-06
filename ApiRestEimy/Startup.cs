@@ -12,11 +12,16 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore.Design;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using AutoMapper;
 using ApiRestEimy.Helper;
+using ApiRestEimy.Interfaces;
+using Serilog;
+using System.IO;
 
 namespace ApiRestEimy
 {
@@ -25,6 +30,11 @@ namespace ApiRestEimy
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            string name = String.Format(".\\log_{0}.txt", DateTime.Now.ToString("dd-MM-yyyy_HH_mm"));
+            Log.Logger = new LoggerConfiguration()//.ReadFrom.Configuration(configuration).CreateLogger();
+                .MinimumLevel.Debug()
+                .WriteTo.File(name)
+                .CreateLogger();
         }
 
         public IConfiguration Configuration { get; }
@@ -33,6 +43,7 @@ namespace ApiRestEimy
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IPerfilesPersonasRepo, PerfilesPersonasRepo>();
+            services.AddScoped<IUsuarioRepo, UsuarioRepo>();
             services.AddDbContext<PerfilPersonasContext>(o => o.UseSqlite("Data source=PerfilesPersonas.db"));
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -49,14 +60,17 @@ namespace ApiRestEimy
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiRestEimy v1"));
             }
+
+            loggerFactory.AddSerilog();
 
             app.UseHttpsRedirection();
 
