@@ -1,0 +1,15 @@
+2022-01-06 16:06:55.037 -04:00 [INF] Application started. Press Ctrl+C to shut down.
+2022-01-06 16:06:55.054 -04:00 [INF] Hosting environment: Development
+2022-01-06 16:06:55.059 -04:00 [INF] Content root path: C:\Users\Eimy\source\repos\ApiRestEimy\ApiRestEimy
+2022-01-06 16:15:15.097 -04:00 [ERR] error
+System.InvalidOperationException: The instance of entity type 'PerfilesPersonas' cannot be tracked because another instance with the same key value for {'Id'} is already being tracked. When attaching existing entities, ensure that only one entity instance with a given key value is attached. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the conflicting key values.
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.IdentityMap`1.ThrowIdentityConflict(InternalEntityEntry entry)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.IdentityMap`1.Add(TKey key, InternalEntityEntry entry, Boolean updateDuplicate)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.IdentityMap`1.Add(TKey key, InternalEntityEntry entry)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.IdentityMap`1.Add(InternalEntityEntry entry)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.StartTracking(InternalEntityEntry entry)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.InternalEntityEntry.SetEntityState(EntityState oldState, EntityState newState, Boolean acceptChanges, Boolean modifyProperties)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.InternalEntityEntry.SetEntityState(EntityState entityState, Boolean acceptChanges, Boolean modifyProperties, Nullable`1 forceStateWhenUnknownKey)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry.set_State(EntityState value)
+   at ApiRestEimy.Repositorio.PerfilesPersonasRepo.editar(PerfilesPersonas perfil)
+   at ApiRestEimy.Controllers.ApiController.Put(Int32 id, PerfilesPersonasCrearDTO persona)

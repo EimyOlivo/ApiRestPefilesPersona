@@ -75,7 +75,7 @@ namespace ApiRestEimy.Services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             _logger.LogInformation("El user:" + user.Id + "Se creo el token: " + tokenHandler.WriteToken(token));
-            return tokenHandler.WriteToken(token);
+            return (tokenHandler.WriteToken(token));
         }
 
     }

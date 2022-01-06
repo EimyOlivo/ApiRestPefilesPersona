@@ -1,8 +1,0 @@
-2022-01-06 13:44:54.177 -04:00 [INF] Application started. Press Ctrl+C to shut down.
-2022-01-06 13:44:54.193 -04:00 [INF] Hosting environment: Development
-2022-01-06 13:44:54.197 -04:00 [INF] Content root path: C:\Users\Eimy\source\repos\ApiRestEimy\ApiRestEimy
-2022-01-06 13:45:19.974 -04:00 [INF] Se creo el token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJuYmYiOjE2NDE0OTExMTksImV4cCI6MTY0MTc1MDMxOSwiaWF0IjoxNjQxNDkxMTE5fQ.o3xlgLBirQdP2GpBFngPWByDY96q0-QTq9PUdFEDWFc
-2022-01-06 13:45:53.296 -04:00 [INF] Se registro un Get en la tabla PefilesPersona
-2022-01-06 13:46:04.087 -04:00 [INF] Se registro un Get por Id en la tabla PefilesPersona
-2022-01-06 13:46:10.405 -04:00 [INF] Se registro un Get por Id en la tabla PefilesPersona
-2022-01-06 13:46:24.448 -04:00 [INF] Se registro un Get por Id en la tabla PefilesPersona

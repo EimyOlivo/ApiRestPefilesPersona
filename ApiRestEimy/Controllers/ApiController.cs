@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using System.Data.Entity.Infrastructure;
+using Microsoft.AspNetCore.Http;
+
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -24,21 +26,25 @@ namespace ApiRestEimy.Controllers
         private readonly IPerfilesPersonasRepo _perfilesPersonasRepo;
         private readonly IMapper _mapper;
         private readonly ILogger<ApiController> _logger;
+        //private readonly HttpContext _context;
 
         public ApiController(IPerfilesPersonasRepo perfilesPersonasRepo, IMapper mapper, ILogger<ApiController> logger)
         {
             _perfilesPersonasRepo = perfilesPersonasRepo;
             _mapper = mapper;
             _logger = logger;
+            //_context = context;
         }
 
         // GET: api/<ApiController>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PerfilesPersonas>>> Get()
         {
+            var context = HttpContext;
+            Usuarios usuario = (Usuarios)context.Items["Usuario"];
             try
             {
-                _logger.LogInformation("Se registro un Get en la tabla PefilesPersona");
+                _logger.LogInformation("el usuario " + usuario.Id + " registro un Get en la tabla PefilesPersona");
                 return Ok(await _perfilesPersonasRepo.ObtenerPerfiles());
             }
             catch (Exception e)
@@ -52,15 +58,21 @@ namespace ApiRestEimy.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PerfilesPersonas>> Get(int id)
         {
+            var context = HttpContext;
+            Usuarios usuario = (Usuarios)context.Items["Usuario"];
             try
             {
                 if(id <= 0)
                 {
-                    _logger.LogError("el elemente llamado en get id perfil no existe");
+                    _logger.LogError("el usuario " + usuario.Id + " el elemente llamado en get id perfil no existe");
                     return Ok("El perfil llamado no existe");
                 }
-                _logger.LogInformation("Se registro un Get por Id en la tabla PefilesPersona");
+                _logger.LogInformation("el usuario " + usuario.Id + " registro un Get por Id en la tabla PefilesPersona");
                 var perfil = await _perfilesPersonasRepo.ObtenerPerfil(id);
+                if(perfil == null)
+                {
+                    return NotFound("El Id dado no existe");
+                }
                 return Ok(perfil);
             }
             catch (Exception e)
@@ -75,17 +87,19 @@ namespace ApiRestEimy.Controllers
         [HttpPost]
         public async Task<ActionResult<PerfilesPersonasCrearDTO>> Post([FromBody] PerfilesPersonasCrearDTO nuevoperfil)
         {
+            var context = HttpContext;
+            Usuarios usuario = (Usuarios)context.Items["Usuario"];
             try
             {
                 PerfilesPersonas perfiles = _mapper.Map<PerfilesPersonas>(nuevoperfil);
 
                 if (nuevoperfil.Nombre == "" || nuevoperfil.Apellido == "")
                 {
-                    _logger.LogError("Rellena bien el nombre y apellido al crear un perfil");
+                    _logger.LogError("el usuario " + usuario.Id + " tuvo un error: Rellena bien el nombre y apellido al crear un perfil");
                     return BadRequest("La casilla de nombre y Apellido son obligatorias. Asegurece de llenarlas correctamenre");
                 }
                 await _perfilesPersonasRepo.Agregar(perfiles);
-                _logger.LogInformation("Se registro un Post en la tabla PefilesPersona");
+                _logger.LogInformation("el usuario " + usuario.Id + " registro un Post en la tabla PefilesPersona");
                 return Ok(perfiles);
 
             }
@@ -102,20 +116,32 @@ namespace ApiRestEimy.Controllers
         [HttpPut]
         public async Task<ActionResult> Put(int id, [FromBody] PerfilesPersonasCrearDTO persona)
         {
+            var context = HttpContext;
+            Usuarios usuario = (Usuarios)context.Items["Usuario"];
+
+            var perfil = await _perfilesPersonasRepo.ObtenerPerfil(id);
+            if (perfil == null)
+            {
+                return NotFound("El Id dado no existe");
+            }
+
             try
             {
                 if(id <= 0 || persona == null || persona.Nombre == null || persona.Apellido == null)
                 {
-                    _logger.LogError("A ingresado los datos de manero incorrecta");
+                    _logger.LogError("el usuario " + usuario.Id + "A ingresado los datos de manero incorrecta");
                     return BadRequest("Ingrese los datos de manera correcta");
                 }
 
-                PerfilesPersonas perfiles = _mapper.Map<PerfilesPersonas>(persona);
-                perfiles.Id = id;
+                //PerfilesPersonas perfiles = _mapper.Map<PerfilesPersonas>(persona);
+                perfil.Nombre = persona.Nombre;
+                perfil.Apellido = persona.Apellido;
+                perfil.Edad = persona.Edad;
+                //perfiles.Id = id;
                 //var perfilObtenido = _perfilesPersonasRepo.ObtenerPerfil(id);
-                await _perfilesPersonasRepo.editar(perfiles);
-                _logger.LogInformation("A editado en la tabla PefilesPersona");
-                return Ok(perfiles);
+                await _perfilesPersonasRepo.editar(perfil);
+                _logger.LogInformation("el usuario " + usuario.Id + " a editado en la tabla PefilesPersona");
+                return Ok(perfil);
                 
             }
             catch (DbUpdateConcurrencyException e)
@@ -133,15 +159,17 @@ namespace ApiRestEimy.Controllers
         [HttpDelete]
         public async Task<ActionResult> Delete(int id)
         {
+            var context = HttpContext;
+            Usuarios usuario = (Usuarios)context.Items["Usuario"];
             var perdilEliminar = await _perfilesPersonasRepo.ObtenerPerfil(id);
             if (perdilEliminar == null)
             {
-                _logger.LogInformation("No se a encontrado el perfil seleccionado para poder eliminarlo");
+                _logger.LogInformation("el usuario " + usuario.Id + "No se a encontrado el perfil seleccionado para poder eliminarlo");
                 return NotFound("No se a encontrado el perfil seleccionado");
 
             }
             await _perfilesPersonasRepo.eliminar(perdilEliminar.Id);
-            _logger.LogInformation("A eliminado con exito el perfil: " + id);
+            _logger.LogInformation("el usuario " + usuario.Id + " a eliminado con exito el perfil: " + id);
             return Ok("Se ha eliminado con existo");
         }
 

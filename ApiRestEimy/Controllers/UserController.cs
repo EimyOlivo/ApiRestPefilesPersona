@@ -8,6 +8,7 @@ using AutoMapper;
 using ApiRestEimy.DTO;
 using ApiRestEimy.Services;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace ApiRestEimy.Controllers
 {
@@ -55,11 +56,28 @@ namespace ApiRestEimy.Controllers
         [HttpPost]
         public async Task<ActionResult<Usuarios>> Post([FromBody] CrearUsuarioDTO nuevoUsuario)
         {
+            var context = HttpContext;
+            Usuarios usuario = (Usuarios)context.Items["Usuario"];
+
             Usuarios perfiles = _mapper.Map<Usuarios>(nuevoUsuario);
+            try
+            {
+                if (nuevoUsuario.Usuario == "" || nuevoUsuario.Clave == "")
+                {
+                    _logger.LogError("el usuario " + usuario.Id + " tuvo un error: Rellena bien el nombre y apellido al crear un perfil");
+                    return BadRequest("La casilla de nombre y Apellido son obligatorias. Asegurece de llenarlas correctamenre");
+                }
 
-            await _usuario.Agregar(perfiles);
-            return Ok(perfiles);
-
+                await _usuario.Agregar(perfiles);
+                _logger.LogInformation("el usuario " + usuario.Id + " registro un Post en la tabla PefilesPersona");
+                return Ok(perfiles);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e, "error");
+                return StatusCode(500);
+            }
+            
         }
     }
 }

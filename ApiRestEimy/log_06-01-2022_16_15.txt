@@ -1,0 +1,7 @@
+2022-01-06 16:15:36.874 -04:00 [INF] Application started. Press Ctrl+C to shut down.
+2022-01-06 16:15:36.901 -04:00 [INF] Hosting environment: Development
+2022-01-06 16:15:36.911 -04:00 [INF] Content root path: C:\Users\Eimy\source\repos\ApiRestEimy\ApiRestEimy
+2022-01-06 16:16:34.639 -04:00 [INF] el usuario 2 a editado en la tabla PefilesPersona
+2022-01-06 16:17:08.985 -04:00 [INF] el usuario 2 registro un Get en la tabla PefilesPersona
+2022-01-06 16:17:26.208 -04:00 [INF] el usuario 2 a eliminado con exito el perfil: 1
+2022-01-06 16:17:31.398 -04:00 [INF] el usuario 2 registro un Get en la tabla PefilesPersona
