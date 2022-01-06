@@ -15,8 +15,10 @@ using System.Data.Entity.Infrastructure;
 
 namespace ApiRestEimy.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
+
     public class ApiController : ControllerBase
     {
         private readonly IPerfilesPersonasRepo _perfilesPersonasRepo;
@@ -97,7 +99,7 @@ namespace ApiRestEimy.Controllers
         {
             try
             {
-                if(id == null || persona == null || persona.Nombre == null || persona.Apellido == null)
+                if(id <= 0 || persona == null || persona.Nombre == null || persona.Apellido == null)
                 {
                     return BadRequest("Ingrese los datos de manera correcta");
                 }
