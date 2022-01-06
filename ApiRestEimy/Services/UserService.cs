@@ -8,7 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using ApiRestEimy.DTO;
 using ApiRestEimy.Helper;
-
+using Microsoft.Extensions.Logging;
 using ApiRestEimy.Modelos;
 using ApiRestEimy.Repositorio;
 using ApiRestEimy.Interfaces;
@@ -29,21 +29,25 @@ namespace ApiRestEimy.Services
 
         private readonly AppSettings _appSettings;
         private readonly IUsuarioRepo _usuarioRepo;
-        public UserService(IOptions<AppSettings> appSettings, IUsuarioRepo usuarioRepo)
+        private readonly ILogger<UserService> _logger;
+        public UserService(IOptions<AppSettings> appSettings, IUsuarioRepo usuarioRepo, ILogger<UserService> logger)
         {
             _appSettings = appSettings.Value;
             _usuarioRepo = usuarioRepo;
+            _logger = logger;
         }
+
 
         public AuthenticateResponse Authenticate(AuthenticateRequest model)
         {
             var user = _usuarioRepo.ObtenerUsuario(model.Usuario, model.Clave).Result;
+            
+            
+            if (user == null || user.Estatus == false) return null;
 
-            // return null if user not found
-            if (user == null) return null;
-
-            // authentication successful so generate jwt token
             var token = generateJwtToken(user);
+
+
 
             return new AuthenticateResponse(user, token);
         }
@@ -58,11 +62,9 @@ namespace ApiRestEimy.Services
             return _usuarioRepo.ObtenerUsuarioId(id).Result;
         }
 
-        // helper methods
 
         private string generateJwtToken(Usuarios user)
         {
-            // generate token that is valid for 7 days
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -72,6 +74,7 @@ namespace ApiRestEimy.Services
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
+            _logger.LogInformation("El user:" + user.Id + "Se creo el token: " + tokenHandler.WriteToken(token));
             return tokenHandler.WriteToken(token);
         }
 

@@ -1,3 +1,0 @@
-2022-01-05 21:52:03.279 -04:00 [INF] Application started. Press Ctrl+C to shut down.
-2022-01-05 21:52:03.295 -04:00 [INF] Hosting environment: Development
-2022-01-05 21:52:03.300 -04:00 [INF] Content root path: C:\Users\Eimy\source\repos\ApiRestEimy\ApiRestEimy

@@ -1,0 +1,4 @@
+2022-01-06 13:15:00.964 -04:00 [INF] Application started. Press Ctrl+C to shut down.
+2022-01-06 13:15:00.980 -04:00 [INF] Hosting environment: Development
+2022-01-06 13:15:00.985 -04:00 [INF] Content root path: C:\Users\Eimy\source\repos\ApiRestEimy\ApiRestEimy
+2022-01-06 13:15:36.840 -04:00 [INF] Se registro un Get por Id en la tabla PefilesPersona

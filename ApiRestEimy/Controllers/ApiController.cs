@@ -38,15 +38,13 @@ namespace ApiRestEimy.Controllers
         {
             try
             {
+                _logger.LogInformation("Se registro un Get en la tabla PefilesPersona");
                 return Ok(await _perfilesPersonasRepo.ObtenerPerfiles());
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "error");
-                return Ok("");
-
-
-
+                return StatusCode(500);
             }
         }
 
@@ -56,8 +54,14 @@ namespace ApiRestEimy.Controllers
         {
             try
             {
+                if(id <= 0)
+                {
+                    _logger.LogError("el elemente llamado en get id perfil no existe");
+                    return Ok("El perfil llamado no existe");
+                }
+                _logger.LogInformation("Se registro un Get por Id en la tabla PefilesPersona");
                 var perfil = await _perfilesPersonasRepo.ObtenerPerfil(id);
-                return Ok("no existe el perfil numero " + id);
+                return Ok(perfil);
             }
             catch (Exception e)
             {
@@ -81,6 +85,7 @@ namespace ApiRestEimy.Controllers
                     return BadRequest("La casilla de nombre y Apellido son obligatorias. Asegurece de llenarlas correctamenre");
                 }
                 await _perfilesPersonasRepo.Agregar(perfiles);
+                _logger.LogInformation("Se registro un Post en la tabla PefilesPersona");
                 return Ok(perfiles);
 
             }
@@ -101,6 +106,7 @@ namespace ApiRestEimy.Controllers
             {
                 if(id <= 0 || persona == null || persona.Nombre == null || persona.Apellido == null)
                 {
+                    _logger.LogError("A ingresado los datos de manero incorrecta");
                     return BadRequest("Ingrese los datos de manera correcta");
                 }
 
@@ -108,6 +114,7 @@ namespace ApiRestEimy.Controllers
                 perfiles.Id = id;
                 //var perfilObtenido = _perfilesPersonasRepo.ObtenerPerfil(id);
                 await _perfilesPersonasRepo.editar(perfiles);
+                _logger.LogInformation("A editado en la tabla PefilesPersona");
                 return Ok(perfiles);
                 
             }
@@ -122,5 +129,21 @@ namespace ApiRestEimy.Controllers
                 return StatusCode(500);
             }
         }
+
+        [HttpDelete]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var perdilEliminar = await _perfilesPersonasRepo.ObtenerPerfil(id);
+            if (perdilEliminar == null)
+            {
+                _logger.LogInformation("No se a encontrado el perfil seleccionado para poder eliminarlo");
+                return NotFound("No se a encontrado el perfil seleccionado");
+
+            }
+            await _perfilesPersonasRepo.eliminar(perdilEliminar.Id);
+            _logger.LogInformation("A eliminado con exito el perfil: " + id);
+            return Ok("Se ha eliminado con existo");
+        }
+
     }
 }

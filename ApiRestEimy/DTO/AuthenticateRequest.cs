@@ -4,6 +4,7 @@ namespace ApiRestEimy.DTO
 {
     public class AuthenticateRequest
     {
+        
         [Required]
         public string Usuario { get; set; }
 

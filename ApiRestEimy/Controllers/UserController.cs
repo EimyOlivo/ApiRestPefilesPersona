@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using AutoMapper;
 using ApiRestEimy.DTO;
 using ApiRestEimy.Services;
+using Microsoft.Extensions.Logging;
 
 namespace ApiRestEimy.Controllers
 {
@@ -17,12 +18,14 @@ namespace ApiRestEimy.Controllers
         private readonly IUsuarioRepo _usuario;
         private readonly IMapper _mapper;
         private readonly IUserService _userService;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(IUsuarioRepo usuario, IMapper mapper, IUserService userService)
+        public UserController(IUsuarioRepo usuario, IMapper mapper, IUserService userService, ILogger<UserController> logger)
         {
             _usuario = usuario;
             _mapper = mapper;
             _userService = userService;
+            _logger = logger;
         }
 
         // POST api/<ApiController>
@@ -42,6 +45,7 @@ namespace ApiRestEimy.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Usuarios>>> Get()
         {
+
             return Ok(await _usuario.ObtenerUsuarios());
             
         }
